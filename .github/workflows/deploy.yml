@@ -24,10 +24,10 @@ jobs:
       run: |
         aws cloudformation deploy \
           --template-file cloudformation/ec2.yaml \
-          --stack-name TestCF_EC2
+          --stack-name TestCfEC2
 
     - name: DeployS3
       run: |
         aws cloudformation deploy \
           --template-file cloudformation/s3.yaml \
-          --stack-name TestCF_S3
+          --stack-name TestCfS3
