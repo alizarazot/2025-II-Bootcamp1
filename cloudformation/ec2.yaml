@@ -9,10 +9,10 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-
-          echo "|| Downloading user data..."
-          aws s3 cp s3://s3-og/main.sh main.sh
-
-          echo "|| Running user data..."
-          chmod +x ./main.sh
-          ./main.sh
+          # Utiliza esto para tus datos de usuario
+          # Instala httpd (Version: Linux 2)
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
