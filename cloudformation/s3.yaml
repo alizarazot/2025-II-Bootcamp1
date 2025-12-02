@@ -1,0 +1,6 @@
+---
+Resources:
+  MyInstance:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "S3-OG"
