@@ -31,3 +31,7 @@ jobs:
         aws cloudformation deploy \
           --template-file cloudformation/s3.yaml \
           --stack-name TestCfS3
+
+    - name: Upload Main Script
+      run: |
+          aws s3 cp main.sh s3://s3-og/main.sh
