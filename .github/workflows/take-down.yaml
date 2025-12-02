@@ -28,7 +28,6 @@ jobs:
           --stack-name TestCfEC2
         
         echo "Stack deleted successfully!"
-            - name: MinTic Delete CloudFormation stack
 
     - name: Delete S3
       run: |
