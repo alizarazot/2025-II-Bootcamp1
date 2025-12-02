@@ -20,12 +20,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: DeployEC2
-      run: |
-        aws cloudformation deploy \
-          --template-file cloudformation/ec2.yaml \
-          --stack-name TestCfEC2
-
     - name: DeployS3
       run: |
         aws cloudformation deploy \
@@ -35,3 +29,9 @@ jobs:
     - name: Upload Main Script
       run: |
           aws s3 cp main.sh s3://s3-og/main.sh
+
+    - name: DeployEC2
+      run: |
+        aws cloudformation deploy \
+          --template-file cloudformation/ec2.yaml \
+          --stack-name TestCfEC2
