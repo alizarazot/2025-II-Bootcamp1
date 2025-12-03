@@ -20,8 +20,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: DeployEC2
+    - name: MinTic Deploy CloudFormation stack
       run: |
         aws cloudformation deploy \
-          --template-file cloudformation/ec2.yaml \
-          --stack-name TestCfEC2
+          --template-file template.yml \
+          --stack-name MiPrimerStackConGITHUB \
+          --capabilities CAPABILITY_NAMED_IAM
