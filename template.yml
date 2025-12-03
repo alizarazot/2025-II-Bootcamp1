@@ -7,7 +7,7 @@ Parameters:
   MinticKeyName:
     Description: Nombre del par de claves SSH
     Type: AWS::EC2::KeyPair::KeyName
-    Default: ssh-iac-mintic-ec2
+    Default: kptest1
 
   # Parámetro para definir la AMI que usarán las instancias EC2
   MinticAmiId:
