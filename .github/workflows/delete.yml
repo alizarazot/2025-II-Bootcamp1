@@ -16,7 +16,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy ASG Stack
-        run: aws cloudformation delete-stack --stack-name MinticASGStack
+        run: |
+          aws cloudformation delete-stack --stack-name MinticASGStack
+          aws cloudformation wait stack-delete-complete --stack-name MinticASGStack
 
   alb:
     name: Delete ALB
@@ -31,7 +33,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy ALB Stack
-        run: aws cloudformation delete-stack --stack-name MinticALBStack
+        run: |
+          aws cloudformation delete-stack --stack-name MinticALBStack
+          aws cloudformation wait stack-delete-complete --stack-name MinticALBStack
 
   ec2:
     name: Delete EC2 Static Instances
@@ -46,7 +50,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy EC2 Stack
-        run: aws cloudformation delete-stack --stack-name MinticEC2Stack
+        run: |
+          aws cloudformation delete-stack --stack-name MinticEC2Stack
+          aws cloudformation wait stack-delete-complete --stack-name MinticEC2Stack
 
   security:
     name: Delete Security
@@ -61,7 +67,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy Security Stack
-        run: aws cloudformation delete-stack --stack-name MinticSecurityStack
+        run: |
+          aws cloudformation delete-stack --stack-name MinticSecurityStack
+          aws cloudformation wait stack-delete-complete --stack-name MinticSecurityStack
 
   vpc:
     name: Delete VPC
@@ -76,4 +84,6 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy VPC Stack
-        run: aws cloudformation delete-stack --stack-name MinticVPCStack
+        run: |
+          aws cloudformation delete-stack --stack-name MinticVPCStack
+          aws cloudformation wait stack-delete-complete --stack-name MinticVPCStack
