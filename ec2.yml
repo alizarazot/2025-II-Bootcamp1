@@ -14,7 +14,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref MinticAmiId
-      InstanceType: t2.micro
+      InstanceType: t3.micro
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           SubnetId:
@@ -36,7 +36,7 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref MinticAmiId
-      InstanceType: t2.micro
+      InstanceType: t3.micro
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
           SubnetId:
