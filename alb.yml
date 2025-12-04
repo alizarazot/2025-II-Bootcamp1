@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla para Application Load Balancer (ALB) público con Target Group y Listener para Mintic
+
+Resources:
+
+  # Application Load Balancer (ALB) público
+  MinticALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: MinticALB
+      Subnets:
+        - !ImportValue Mintic-SubnetPublic1  # Importa desde VPC stack
+        - !ImportValue Mintic-SubnetPublic2
+      SecurityGroups:
+        - !ImportValue Mintic-SecurityGroupId  # Importa desde Security stack
+      Scheme: internet-facing
+      Type: application
+
+  # Target group para el ALB
+  MinticTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !ImportValue Mintic-VPCId  # Importa la VPC desde VPC stack
+      Protocol: HTTP
+      Port: 80
+      TargetType: instance
+      HealthCheckPath: /
+
+  # Listener del ALB en el puerto 80
+  MinticListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MinticALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MinticTargetGroup
+
+Outputs:
+
+  # DNS del Application Load Balancer
+  MinticALBDNS:
+    Description: DNS del Application Load Balancer
+    Value: !GetAtt MinticALB.DNSName
+    Export:
+      Name: MinticALBDNS
+
+  # ARN del Target Group para relacionarlo con ASG
+  MinticTargetGroupArn:
+    Description: ARN del Target Group
+    Value: !Ref MinticTargetGroup
+    Export:
+      Name: MinticTargetGroupArn

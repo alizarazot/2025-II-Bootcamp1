@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla para Auto Scaling Group (ASG) con Launch Template y warm pool para Mintic
+
+Resources:
+
+  # Plantilla de lanzamiento para el Auto Scaling Group
+  MinticLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0f88e80871fd81e91  # Puedes parametrizar si quieres
+        InstanceType: t2.micro
+        SecurityGroupIds:
+          - !ImportValue Mintic-SecurityGroupId  # Importa el SG exportado desde Security Stack
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+            echo "<html><body><h1>¡Hola desde CloudFormation ASG - IP: $(hostname -f)!</h1></body></html>" > /var/www/html/index.html
+
+  # Auto Scaling Group con 4 instancias distribuidas en 2 AZ
+  MinticASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !ImportValue Mintic-SubnetPublic1   # Importa desde VPC stack
+        - !ImportValue Mintic-SubnetPublic2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MinticLaunchTemplate
+        Version: !GetAtt MinticLaunchTemplate.LatestVersionNumber
+      MinSize: '4'
+      MaxSize: '4'
+      DesiredCapacity: '4'
+      TargetGroupARNs:
+        - !ImportValue MinticTargetGroupArn    # Importa desde ALB stack
+
+  # Apaga todas las instancias del ASG a las 8:00 AM hora Colombia (13:00 UTC)
+  MinticASGStopSchedule:
+    Type: AWS::AutoScaling::ScheduledAction
+    Properties:
+      AutoScalingGroupName: !Ref MinticASG
+      MinSize: 0
+      MaxSize: 0    
+      DesiredCapacity: 0
+      Recurrence: "0 13 * * *"   # 8:00 AM Colombia
+
+  # Enciende todas las instancias del ASG a las 8:15 AM hora Colombia (13:15 UTC)
+  MinticASGStartSchedule:
+    Type: AWS::AutoScaling::ScheduledAction
+    Properties:
+      AutoScalingGroupName: !Ref MinticASG
+      MinSize: 4
+      MaxSize: 4      
+      DesiredCapacity: 4
+      Recurrence: "15 13 * * *"  # 8:15 AM Colombia
+
+  # Warm pool para mantener 2 instancias "listas" pero detenidas
+  MinticWarmPool:
+    Type: AWS::AutoScaling::WarmPool
+    Properties:
+      AutoScalingGroupName: !Ref MinticASG
+      PoolState: Stopped  # Las instancias estarán en estado detenido
+      MinSize: 2          # Mantiene 2 instancias en el warm pool
+
+Outputs:
+
+  # ID del Auto Scaling Group
+  MinticASGId:
+    Description: ID del Auto Scaling Group
+    Value: !Ref MinticASG
+    Export:
+      Name: MinticASGId
