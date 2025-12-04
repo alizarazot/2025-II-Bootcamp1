@@ -14,19 +14,19 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Validate VPC template
-        run: aws cloudformation validate-template --template-body file://templates/vpc.yml
+        run: aws cloudformation validate-template --region us-east-1 --template-body file://templates/vpc.yml
       
       - name: Validate Security template
-        run: aws cloudformation validate-template --template-body file://templates/security.yml
+        run: aws cloudformation validate-template --region us-east-1 template-body file://templates/security.yml
       
       - name: Validate EC2 template
-        run: aws cloudformation validate-template --template-body file://templates/ec2.yml
+        run: aws cloudformation validate-template --region us-east-1 --template-body file://templates/ec2.yml
       
       - name: Validate ALB template
-        run: aws cloudformation validate-template --template-body file://templates/alb.yml
+        run: aws cloudformation validate-template --region us-east-1 --template-body file://templates/alb.yml
       
       - name: Validate ASG template
-        run: aws cloudformation validate-template --template-body file://templates/asg.yml
+        run: aws cloudformation validate-template --region us-east-1 --template-body file://templates/asg.yml
 
 
   vpc:
