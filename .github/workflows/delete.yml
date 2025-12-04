@@ -1,0 +1,79 @@
+name: Delete Stack
+
+on:
+  workflow_dispatch:
+
+jobs:
+  asg:
+    name: Delete Auto Scaling Group
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy ASG Stack
+        run: aws cloudformation delete-stack --stack-name MinticASGStack
+
+  alb:
+    name: Delete ALB
+    runs-on: ubuntu-latest
+    needs: asg
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy ALB Stack
+        run: aws cloudformation delete-stack --stack-name MinticALBStack
+
+  ec2:
+    name: Delete EC2 Static Instances
+    runs-on: ubuntu-latest
+    needs: alb
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy EC2 Stack
+        run: aws cloudformation delete-stack --stack-name MinticEC2Stack
+
+  security:
+    name: Delete Security
+    runs-on: ubuntu-latest
+    needs: ec2
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy Security Stack
+        run: aws cloudformation delete-stack --stack-name MinticSecurityStack
+
+  vpc:
+    name: Delete VPC
+    runs-on: ubuntu-latest
+    needs: security
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy VPC Stack
+        run: aws cloudformation delete-stack --stack-name MinticVPCStack
